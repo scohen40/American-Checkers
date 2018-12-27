@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace American_Checkers
+namespace AmericanCheckers
 {
     public class BoardBuilder
     {

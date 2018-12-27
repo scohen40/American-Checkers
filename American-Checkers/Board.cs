@@ -1,5 +1,6 @@
-﻿using System;
-namespace American-Checkers
+﻿
+using System;
+namespace AmericanCheckers
 {
     public class Board
     {
