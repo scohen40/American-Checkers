@@ -14,3 +14,15 @@ A simple American Checkers game written in C#.
 * no backwards captures allowed by regular pieces
 * when a piece reaches the end it becomes a queen
 * a queen may capture backwards
+
+**To Do**
+* Board Class
+* Cell Class
+  * Queen Status
+  * Status (Unoccupied, Occupied Red, Occupied Black)
+  * Location
+* Movemaker/Controller/Rules Class
+  * Pass it a cell.
+  * Heuristics Object
+* Heuristic Class
+* GUI
