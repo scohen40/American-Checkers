@@ -6,50 +6,184 @@ namespace AmericanCheckers
 {
     class MoveHeuristic
     {
-        public Cell Beginnning { get; set; }
-        public Cell End { get; set; }
-        public Board CurrentBoard { get; set; }
 
-        double PieceValue = 5;
+        public Board PotentialBoard { get; set; }
+        public Cell.CellStatus MyStatus;
+        public Cell.CellStatus OpponentStatus;
+        double PIECE_VALUE = 5;
+        double OpponentValues;
+        double MyValues;
+        double MySafePieces;
+        double OpponentSafePieces;
+        double MyAttackingPawns;
+        double OpponentAttackingPawns;
         double Hueristic;
-        Boolean Attack;
-        Cell.CellStatus myStatus;
-        public MoveHeuristic(Cell Beginning, Cell End, Board CurrentBoard, Boolean Attack)
+        public MoveHeuristic(Player.Color Me)
         {
-            this.Beginnning = Beginnning;
-            this.End = End;
-            this.CurrentBoard = CurrentBoard;
-            this.Attack = Attack;
-            this.myStatus = Beginning.Status;
-            if(Beginnning.Queen)
+            if (Me.Equals(Player.Color.Red))
             {
-                PieceValue += 2;
+                MyStatus = Cell.CellStatus.OccupiedRed;
+                OpponentStatus = Cell.CellStatus.OccupiedBlack;
             }
             else
             {
-                PieceValue += Beginnning.RowLocation;
+                MyStatus = Cell.CellStatus.OccupiedBlack;
+                OpponentStatus = Cell.CellStatus.OccupiedRed;
             }
-        
         }
 
-        public double CalculateHeuristic()
+        public double CalculateHeuristic(Board PotentialBoard)
         {
-            if (Attack) {Hueristic = 1; }
-            if(End.ColumnLocation == 0 || End.ColumnLocation == 7) { Hueristic += 0.3; }
-            if(CurrentBoard.BoardGame[End.RowLocation + 1,End.ColumnLocation + 1 ].Status == myStatus) { Hueristic += 0.25; }
-            if (CurrentBoard.BoardGame[End.RowLocation + 1, End.ColumnLocation - 1].Status == myStatus) { Hueristic += 0.25; }
-            if (Beginnning.Queen && End.RowLocation == Beginnning.RowLocation - 1)
+            this.PotentialBoard = PotentialBoard;
+
+            for (int row = 0; row < PotentialBoard.BoardGame.Length; row++)
             {
-                if (CurrentBoard.BoardGame[End.RowLocation - 1, End.ColumnLocation + 1].Status == myStatus) { Hueristic += 0.25; }
-                if (CurrentBoard.BoardGame[End.RowLocation - 1, End.ColumnLocation - 1].Status == myStatus) { Hueristic += 0.25; }
+                for (int col = 0; col < PotentialBoard.BoardGame.Length; col++)
+                {
+                    Cell CurrentCell = PotentialBoard.BoardGame[row, col];
+
+                    if (CurrentCell.Status.Equals(MyStatus))
+                    {
+                        if (CurrentCell.Queen)
+                        {
+                            MyValues += row + PIECE_VALUE + 2;
+                        }
+                        else
+                        {
+                            MyValues += row + PIECE_VALUE;
+                        }
+
+                        if (col.Equals(0) || col.Equals(PotentialBoard.BoardGame.Length - 1))
+                        {
+                            MySafePieces++;
+                        }
+                        if (AttackPossible(CurrentCell))
+                        {
+                            MyAttackingPawns++;
+                        }
+                    }
+                    else if (CurrentCell.Status.Equals(OpponentStatus))
+                    {
+                        if (CurrentCell.Queen)
+                        {
+                            OpponentValues += PIECE_VALUE + 2 - row;
+                        }
+                        else
+                        {
+                            OpponentValues += PIECE_VALUE - row;
+                        }
+
+                        if (col.Equals(0) || col.Equals(PotentialBoard.BoardGame.Length - 1))
+                        {
+                            OpponentSafePieces++;
+                        }
+                        if (AttackPossible(CurrentCell))
+                        {
+                            OpponentAttackingPawns++;
+                        }
+                    }
+                }
             }
 
+            Hueristic = (MyValues - OpponentValues) + ((MySafePieces - OpponentSafePieces) * 0.8) + ((MyAttackingPawns - OpponentAttackingPawns) * 1.5);
 
             return Hueristic;
         }
-            
 
+        private bool AttackPossible(Cell currentCell)
+        {
+            bool attack = false;
 
+            if (currentCell.Status.Equals(MyStatus))
+            {
+                if (PotentialBoard.BoardGame[currentCell.RowLocation + 1, currentCell.ColumnLocation + 1]
+                    .Status.Equals(OpponentStatus))
+                {
+                    if (PotentialBoard.BoardGame[currentCell.RowLocation + 2, currentCell.ColumnLocation + 2]
+                    .Status.Equals(Cell.CellStatus.Unoccupied))
+                    {
+                        return true;
+                    }
+                }
+                else if (PotentialBoard.BoardGame[currentCell.RowLocation + 1, currentCell.ColumnLocation - 1]
+                   .Status.Equals(OpponentStatus))
+                {
+                    if (PotentialBoard.BoardGame[currentCell.RowLocation + 2, currentCell.ColumnLocation - 2]
+                    .Status.Equals(Cell.CellStatus.Unoccupied))
+                    {
+                        return true;
+                    }
+                }
+
+                if (currentCell.Queen)
+                {
+                    if (PotentialBoard.BoardGame[currentCell.RowLocation - 1, currentCell.ColumnLocation + 1]
+                                        .Status.Equals(OpponentStatus))
+                    {
+                        if (PotentialBoard.BoardGame[currentCell.RowLocation - 2, currentCell.ColumnLocation + 2]
+                        .Status.Equals(Cell.CellStatus.Unoccupied))
+                        {
+                            return true;
+                        }
+                    }
+                    else if (PotentialBoard.BoardGame[currentCell.RowLocation - 1, currentCell.ColumnLocation - 1]
+                       .Status.Equals(OpponentStatus))
+                    {
+                        if (PotentialBoard.BoardGame[currentCell.RowLocation - 2, currentCell.ColumnLocation - 2]
+                        .Status.Equals(Cell.CellStatus.Unoccupied))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            if (currentCell.Status.Equals(OpponentStatus))
+            {
+                if (PotentialBoard.BoardGame[currentCell.RowLocation - 1, currentCell.ColumnLocation + 1]
+                    .Status.Equals(MyStatus))
+                {
+                    if (PotentialBoard.BoardGame[currentCell.RowLocation - 2, currentCell.ColumnLocation + 2]
+                    .Status.Equals(Cell.CellStatus.Unoccupied))
+                    {
+                        return true;
+                    }
+                }
+                else if (PotentialBoard.BoardGame[currentCell.RowLocation - 1, currentCell.ColumnLocation - 1]
+                   .Status.Equals(MyStatus))
+                {
+                    if (PotentialBoard.BoardGame[currentCell.RowLocation - 2, currentCell.ColumnLocation - 2]
+                    .Status.Equals(Cell.CellStatus.Unoccupied))
+                    {
+                        return true;
+                    }
+                }
+
+                if (currentCell.Queen)
+                {
+                    if (PotentialBoard.BoardGame[currentCell.RowLocation + 1, currentCell.ColumnLocation + 1]
+                                        .Status.Equals(MyStatus))
+                    {
+                        if (PotentialBoard.BoardGame[currentCell.RowLocation + 2, currentCell.ColumnLocation + 2]
+                        .Status.Equals(Cell.CellStatus.Unoccupied))
+                        {
+                            return true;
+                        }
+                    }
+                    else if (PotentialBoard.BoardGame[currentCell.RowLocation + 1, currentCell.ColumnLocation - 1]
+                       .Status.Equals(MyStatus))
+                    {
+                        if (PotentialBoard.BoardGame[currentCell.RowLocation + 2, currentCell.ColumnLocation - 2]
+                        .Status.Equals(Cell.CellStatus.Unoccupied))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return attack;
+
+        }
 
     }
 }

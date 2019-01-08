@@ -15,7 +15,7 @@ namespace AmericanCheckers
 
         public CellStatus Status { get; set; }
 
-        private Boolean Queen { get; set; }
+        public Boolean Queen { get; set; }
 
         public Cell(int rowLocation, int columnLocation)
         {
