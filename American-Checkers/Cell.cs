@@ -24,10 +24,16 @@ namespace AmericanCheckers
             Queen = false;
         }
 
+        public Cell(int rowLocation, int columnLocation, bool queen, CellStatus status)
+        {
+            RowLocation = rowLocation;
+            ColumnLocation = columnLocation;
+            Queen = queen;
+            Status = status;
+        }
 
 
-      
 
-      
+
     }
 }
