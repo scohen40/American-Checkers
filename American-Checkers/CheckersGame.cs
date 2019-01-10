@@ -16,9 +16,9 @@ namespace AmericanCheckers
 
         }
 
-        public List<Board> PossibleBoardsForPlayer(Board InitialBoard)
+        public Dictionary<Board, String> PossibleBoardsForPlayer(Board InitialBoard)
         {
-            List<Board> PotentialMoves = new List<Board>();
+            Dictionary<Board, String> PotentialMoves = new Dictionary<Board, String>();
             Player.Color OurColor = Game.UserPlayer.PlayerColor;
             Cell.CellStatus OurStatus;
             Cell.CellStatus OponentStatus;
@@ -52,7 +52,7 @@ namespace AmericanCheckers
                                         Board Potential = InitialBoard;
                                         Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                         Potential.BoardGame[row + 1, col + 1] = new Cell(row + 1, col + 1, currentCell.Queen, OurStatus);
-                                        PotentialMoves.Add(Potential);
+                                        PotentialMoves.Add(Potential, "notAttack");
                                     }
                                     if (col != InitialBoard.BoardGame.Length - 2)
                                     {
@@ -63,7 +63,7 @@ namespace AmericanCheckers
                                             Potential.BoardGame[row + 2, col + 2] = new Cell(row + 2, col + 2, currentCell.Queen, OurStatus);
                                             Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                             Potential.BoardGame[row + 1, col + 1] = new Cell(row + 1, col + 1, false, Cell.CellStatus.Unoccupied);
-                                            PotentialMoves.Add(Potential);
+                                            PotentialMoves.Add(Potential, "Attack");
                                         }
                                     }
 
@@ -75,7 +75,7 @@ namespace AmericanCheckers
                                         Board Potential = InitialBoard;
                                         Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                         Potential.BoardGame[row + 1, col - 1] = new Cell(row + 1, col - 1, currentCell.Queen, OurStatus);
-                                        PotentialMoves.Add(Potential);
+                                        PotentialMoves.Add(Potential, "notAttack");
                                     }
                                     if (col != 1)
                                     {
@@ -86,7 +86,7 @@ namespace AmericanCheckers
                                             Potential.BoardGame[row + 2, col - 2] = new Cell(row + 2, col - 2, currentCell.Queen, OurStatus);
                                             Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                             Potential.BoardGame[row + 1, col - 1] = new Cell(row + 1, col - 1, false, Cell.CellStatus.Unoccupied);
-                                            PotentialMoves.Add(Potential);
+                                            PotentialMoves.Add(Potential, "Attack");
                                         }
                                     }
                                 }
@@ -102,7 +102,7 @@ namespace AmericanCheckers
                                     Board Potential = InitialBoard;
                                     Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                     Potential.BoardGame[row - 1, col + 1] = new Cell(row - 1, col + 1, true, OurStatus);
-                                    PotentialMoves.Add(Potential);
+                                    PotentialMoves.Add(Potential, "notAttack");
                                 }
                                 if (col != InitialBoard.BoardGame.Length - 2)
                                 {
@@ -113,7 +113,7 @@ namespace AmericanCheckers
                                         Potential.BoardGame[row - 2, col + 2] = new Cell(row - 2, col + 2, currentCell.Queen, OurStatus);
                                         Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                         Potential.BoardGame[row - 1, col + 1] = new Cell(row - 1, col + 1, false, Cell.CellStatus.Unoccupied);
-                                        PotentialMoves.Add(Potential);
+                                        PotentialMoves.Add(Potential, "Attack");
                                     }
                                 }
                             }
@@ -124,7 +124,7 @@ namespace AmericanCheckers
                                     Board Potential = InitialBoard;
                                     Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                     Potential.BoardGame[row - 1, col - 1] = new Cell(row - 1, col - 1, true, OurStatus);
-                                    PotentialMoves.Add(Potential);
+                                    PotentialMoves.Add(Potential, "notAttack");
                                 }
 
                                 if (col != 1)
@@ -136,34 +136,35 @@ namespace AmericanCheckers
                                         Potential.BoardGame[row - 2, col - 2] = new Cell(row - 2, col - 2, currentCell.Queen, OurStatus);
                                         Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                         Potential.BoardGame[row - 1, col - 1] = new Cell(row - 1, col - 1, false, Cell.CellStatus.Unoccupied);
-                                        PotentialMoves.Add(Potential);
+                                        PotentialMoves.Add(Potential, "Attack");
                                     }
                                 }
                             }
 
                         }
 
-
-
-
-
-
-
                     }
                 }
             }
-
-
-
+            if (PotentialMoves.ContainsValue("Attack"))
+            {
+                foreach (Board board in PotentialMoves.Keys)
+                {
+                    if (PotentialMoves[board] == "notAttack")
+                    {
+                        PotentialMoves.Remove(board);
+                    }
+                }
+            }
             return PotentialMoves;
         }
 
 
 
 
-        public List<Board> PossibleBoardsForComputer(Board InitialBoard)
+        public Dictionary<Board, String> PossibleBoardsForComputer(Board InitialBoard)
         {
-            List<Board> PotentialMoves = new List<Board>();
+            Dictionary<Board, String> PotentialMoves = new Dictionary<Board, String>();
             Player.Color OurColor = Game.ComputerPlayer.PlayerColor;
             Cell.CellStatus OurStatus;
             Cell.CellStatus OponentStatus;
@@ -195,7 +196,7 @@ namespace AmericanCheckers
                                     Board Potential = InitialBoard;
                                     Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                     Potential.BoardGame[row + 1, col + 1] = new Cell(row + 1, col + 1, currentCell.Queen, OurStatus);
-                                    PotentialMoves.Add(Potential);
+                                    PotentialMoves.Add(Potential, "notAttack");
                                 }
                                 if (col != InitialBoard.BoardGame.Length - 2)
                                 {
@@ -206,7 +207,7 @@ namespace AmericanCheckers
                                         Potential.BoardGame[row + 2, col + 2] = new Cell(row + 2, col + 2, currentCell.Queen, OurStatus);
                                         Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                         Potential.BoardGame[row + 1, col + 1] = new Cell(row + 1, col + 1, false, Cell.CellStatus.Unoccupied);
-                                        PotentialMoves.Add(Potential);
+                                        PotentialMoves.Add(Potential, "Attack");
                                     }
                                 }
 
@@ -218,7 +219,7 @@ namespace AmericanCheckers
                                     Board Potential = InitialBoard;
                                     Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                     Potential.BoardGame[row + 1, col - 1] = new Cell(row + 1, col - 1, currentCell.Queen, OurStatus);
-                                    PotentialMoves.Add(Potential);
+                                    PotentialMoves.Add(Potential, "notAttack");
                                 }
                                 if (col != 1)
                                 {
@@ -229,7 +230,7 @@ namespace AmericanCheckers
                                         Potential.BoardGame[row + 2, col - 2] = new Cell(row + 2, col - 2, currentCell.Queen, OurStatus);
                                         Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                         Potential.BoardGame[row + 1, col - 1] = new Cell(row + 1, col - 1, false, Cell.CellStatus.Unoccupied);
-                                        PotentialMoves.Add(Potential);
+                                        PotentialMoves.Add(Potential, "Attack");
                                     }
                                 }
                             }
@@ -247,7 +248,7 @@ namespace AmericanCheckers
                                         Board Potential = InitialBoard;
                                         Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                         Potential.BoardGame[row - 1, col + 1] = new Cell(row - 1, col + 1, true, OurStatus);
-                                        PotentialMoves.Add(Potential);
+                                        PotentialMoves.Add(Potential, "notAttack");
                                     }
                                     if (col != InitialBoard.BoardGame.Length - 2)
                                     {
@@ -258,7 +259,7 @@ namespace AmericanCheckers
                                             Potential.BoardGame[row - 2, col + 2] = new Cell(row - 2, col + 2, currentCell.Queen, OurStatus);
                                             Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                             Potential.BoardGame[row - 1, col + 1] = new Cell(row - 1, col + 1, false, Cell.CellStatus.Unoccupied);
-                                            PotentialMoves.Add(Potential);
+                                            PotentialMoves.Add(Potential, "Attack");
                                         }
                                     }
                                 }
@@ -269,7 +270,7 @@ namespace AmericanCheckers
                                         Board Potential = InitialBoard;
                                         Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                         Potential.BoardGame[row - 1, col - 1] = new Cell(row - 1, col - 1, true, OurStatus);
-                                        PotentialMoves.Add(Potential);
+                                        PotentialMoves.Add(Potential, "notAttack");
                                     }
 
                                     if (col != 1)
@@ -281,24 +282,28 @@ namespace AmericanCheckers
                                             Potential.BoardGame[row - 2, col - 2] = new Cell(row - 2, col - 2, currentCell.Queen, OurStatus);
                                             Potential.BoardGame[row, col] = new Cell(row, col, false, Cell.CellStatus.Unoccupied);
                                             Potential.BoardGame[row - 1, col - 1] = new Cell(row - 1, col - 1, false, Cell.CellStatus.Unoccupied);
-                                            PotentialMoves.Add(Potential);
+                                            PotentialMoves.Add(Potential, "Attack");
                                         }
                                     }
                                 }
 
                             }
-                        }
-
-
-
-
-
+                    }
 
                     }
                 }
             }
 
-
+            if (PotentialMoves.ContainsValue("Attack"))
+            {
+                foreach (Board board in PotentialMoves.Keys)
+                {
+                    if (PotentialMoves[board] == "notAttack")
+                    {
+                        PotentialMoves.Remove(board);
+                    }
+                }
+            }
 
             return PotentialMoves;
         }
