@@ -15,7 +15,7 @@ namespace AmericanCheckers
 
         public CellStatus Status { get; set; }
 
-        private Boolean Queen { get; set; }
+        public Boolean Queen { get; set; }
 
         public Cell(int rowLocation, int columnLocation)
         {
@@ -24,10 +24,16 @@ namespace AmericanCheckers
             Queen = false;
         }
 
+        public Cell(int rowLocation, int columnLocation, bool queen, CellStatus status)
+        {
+            RowLocation = rowLocation;
+            ColumnLocation = columnLocation;
+            Queen = queen;
+            Status = status;
+        }
 
 
-      
 
-      
+
     }
 }
